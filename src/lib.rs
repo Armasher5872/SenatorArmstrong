@@ -266,7 +266,7 @@ extern "C" fn mods_mounted(_ev: Event) {
 mod armstrong;
 pub mod common;
 
-#[skyline::main(name = "SenatorArmstrong")]
+#[skyline::main(name = "armstrong")]
 pub fn main() {
     unsafe {
         //allows online play

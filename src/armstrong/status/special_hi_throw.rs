@@ -34,11 +34,13 @@ unsafe extern "C" fn armstrong_special_hi_throw_main_status(fighter: &mut L2CFig
     if !StopModule::is_stop(fighter.module_accessor) {
         armstrong_special_hi_throw_sub_status(fighter, false.into());
     }
+    /*
     if capture_id != 0x50000000 {
         let capture_boma = sv_battle_object::module_accessor(capture_id as u32);
         StatusModule::change_status_force(capture_boma, *FIGHTER_STATUS_KIND_THROWN, false);
     }
-    grabbed_anim_selector(fighter, "thrown_f", 0.0, 1.0);
+    */
+    //grabbed_anim_selector(fighter, "thrown_f", 0.0, 1.0);
     MotionModule::change_motion(fighter.module_accessor, Hash40::new("special_hi_throw"), 0.0, 1.0, false, 0.0, false, false);
     fighter.global_table[SUB_STATUS].assign(&L2CValue::Ptr(armstrong_special_hi_throw_sub_status as *const () as _));
     fighter.sub_shift_status_main(L2CValue::Ptr(armstrong_special_hi_throw_main_loop as *const () as _))

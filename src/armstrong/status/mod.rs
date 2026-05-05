@@ -35,6 +35,7 @@ mod attack_lw3;
 mod attack_lw4_hold;
 mod attack_s3;
 mod attack_s4_hold;
+mod catched_air_ganon;
 mod final_smash;
 mod final_throw;
 mod firepillar_burst;
@@ -59,6 +60,7 @@ pub fn install() {
     attack_lw4_hold::install();
     attack_s3::install();
     attack_s4_hold::install();
+    catched_air_ganon::install();
     final_smash::install();
     final_throw::install();
     firepillar_burst::install();

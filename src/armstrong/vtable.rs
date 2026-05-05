@@ -98,8 +98,8 @@ unsafe extern "C" fn armstrong_link_event(_vtable: u64, fighter: &mut Fighter, l
                 }
                 if status == *FIGHTER_STATUS_KIND_SPECIAL_HI {
                     StatusModule::change_status_request(boma, *FIGHTER_GANON_STATUS_KIND_SPECIAL_HI_THROW, false);
-                    capture_event.result = true;
-                    capture_event.node = smash2::phx::Hash40::new("throw");
+                    capture_event.motion_offset = offset;
+                    capture_event.motion_offset_lw = offset_lw;
                     return 0;
                 }
                 return 0;
