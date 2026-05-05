@@ -8,8 +8,8 @@ unsafe extern "C" fn ssbexo_armstrong_up_special_acmd(agent: &mut L2CAgentBase) 
     }
     frame(agent.lua_state_agent, 14.0);
     if is_excute(agent) {
-        CATCH(agent, 0, Hash40::new("top"), 6.5, 0.0, 6.0, 6.0, None, None, None, *FIGHTER_STATUS_KIND_THROWN, *COLLISION_SITUATION_MASK_GA);
         ATTACK_ABS(agent, *FIGHTER_ATTACK_ABSOLUTE_KIND_CATCH, 0, 6.0, 0, 50, 0, 70, 0.0, 1.0, *ATTACK_LR_CHECK_F, 0.0, false, Hash40::new("collision_attr_normal"), *ATTACK_SOUND_LEVEL_S, *COLLISION_SOUND_ATTR_KICK, *ATTACK_REGION_NONE);
+        CATCH(agent, 0, Hash40::new("top"), 6.5, 0.0, 6.0, 6.0, None, None, None, *FIGHTER_STATUS_KIND_THROWN, *COLLISION_SITUATION_MASK_GA);
     }
     frame(agent.lua_state_agent, 26.0);
     if is_excute(agent) {

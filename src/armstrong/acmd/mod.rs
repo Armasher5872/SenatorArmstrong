@@ -12,7 +12,8 @@ use {
             sv_animcmd::{
                 execute,
                 frame,
-                wait
+                wait,
+                wait_loop_sync_mot
             },
             *
         },
