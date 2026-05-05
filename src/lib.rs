@@ -1,10 +1,303 @@
-#![feature(concat_idents)]
 #![feature(proc_macro_hygiene)]
-#![feature(asm)]
+use {
+    arcropolis_api::*,
+    param_config::*,
+    smash::{
+        hash40,
+        lib::lua_const::*,
+    },
+    std::{
+        collections::HashMap,
+        fs::*,
+    },
+    the_csk_collection_api::*,
+};
 
-mod custom;
+pub static mut MARKED_COLORS: [bool; 256] = [false; 256];
 
-#[skyline::main(name = "Replace with the same name as your plugin")]
+extern "C" fn mods_mounted(_ev: Event) {
+    const MARKER_FILE: &str = "armstrong.marker";
+    let mut lowest_color: i32 = -1;
+    let mut marked_slots: Vec<i32> = vec![];
+    for x in 0..256 {
+        if let Ok(_) = read(format!("mods:/fighter/ganon/model/body/c{:02}/{}", x, MARKER_FILE)) {
+            unsafe {
+                marked_slots.push(x as _);
+                MARKED_COLORS[x as usize] = true;
+                if lowest_color == -1 {
+                    lowest_color = x as _ ;
+                }
+            }
+        }
+    }
+    if lowest_color == -1 {
+        return; //If no marker exist, leave
+    }
+    let color_num = {
+        unsafe {
+            let mut index = lowest_color;
+            while index < 256 && MARKED_COLORS[index as usize] {
+                index += 1;
+            }
+            index - lowest_color
+        }
+    };
+    update_float_2(*FIGHTER_KIND_GANON, marked_slots.clone(), (hash40("walk_accel_mul"), 0, 0.06));
+    update_float_2(*FIGHTER_KIND_GANON, marked_slots.clone(), (hash40("walk_accel_add"), 0, 0.01));
+    update_float_2(*FIGHTER_KIND_GANON, marked_slots.clone(), (hash40("walk_speed_max"), 0, 0.64));
+    update_float_2(*FIGHTER_KIND_GANON, marked_slots.clone(), (hash40("ground_brake"), 0, 0.15));
+    update_float_2(*FIGHTER_KIND_GANON, marked_slots.clone(), (hash40("dash_speed"), 0, 1.443));
+    update_float_2(*FIGHTER_KIND_GANON, marked_slots.clone(), (hash40("run_accel_mul"), 0, 0.015));
+    update_float_2(*FIGHTER_KIND_GANON, marked_slots.clone(), (hash40("run_accel_add"), 0, 0.15));
+    update_float_2(*FIGHTER_KIND_GANON, marked_slots.clone(), (hash40("run_speed_max"), 0, 1.36));
+    update_float_2(*FIGHTER_KIND_GANON, marked_slots.clone(), (hash40("jump_speed_x"), 0, 0.788));
+    update_float_2(*FIGHTER_KIND_GANON, marked_slots.clone(), (hash40("jump_speed_x_max"), 0, 1.443));
+    update_float_2(*FIGHTER_KIND_GANON, marked_slots.clone(), (hash40("jump_y"), 0, 32.0));
+    update_float_2(*FIGHTER_KIND_GANON, marked_slots.clone(), (hash40("mini_jump_y"), 0, 15.0));
+    update_float_2(*FIGHTER_KIND_GANON, marked_slots.clone(), (hash40("jump_aerial_y"), 0, 30.35));
+    update_float_2(*FIGHTER_KIND_GANON, marked_slots.clone(), (hash40("air_accel_x_mul"), 0, 0.02));
+    update_float_2(*FIGHTER_KIND_GANON, marked_slots.clone(), (hash40("air_accel_x_add"), 0, 0.05));
+    update_float_2(*FIGHTER_KIND_GANON, marked_slots.clone(), (hash40("air_speed_x_stable"), 0, 0.875));
+    update_float_2(*FIGHTER_KIND_GANON, marked_slots.clone(), (hash40("air_brake_x"), 0, 0.01));
+    update_float_2(*FIGHTER_KIND_GANON, marked_slots.clone(), (hash40("air_accel_y"), 0, 0.13));
+    update_float_2(*FIGHTER_KIND_GANON, marked_slots.clone(), (hash40("air_speed_y_stable"), 0, 1.85));
+    update_float_2(*FIGHTER_KIND_GANON, marked_slots.clone(), (hash40("damage_fly_top_air_accel_y"), 0, 0.13));
+    update_float_2(*FIGHTER_KIND_GANON, marked_slots.clone(), (hash40("damage_fly_top_speed_y_stable"), 0, 1.85));
+    update_float_2(*FIGHTER_KIND_GANON, marked_slots.clone(), (hash40("dive_speed_y"), 0, 3.17));
+    update_float_2(*FIGHTER_KIND_GANON, marked_slots.clone(), (hash40("weight"), 0, 116.0));
+    update_float_2(*FIGHTER_KIND_GANON, marked_slots.clone(), (hash40("landing_attack_air_frame_n"), 0, 10.0));
+    update_float_2(*FIGHTER_KIND_GANON, marked_slots.clone(), (hash40("landing_attack_air_frame_f"), 0, 13.0));
+    update_float_2(*FIGHTER_KIND_GANON, marked_slots.clone(), (hash40("landing_attack_air_frame_b"), 0, 11.0));
+    update_float_2(*FIGHTER_KIND_GANON, marked_slots.clone(), (hash40("landing_attack_air_frame_hi"), 0, 12.0));
+    update_float_2(*FIGHTER_KIND_GANON, marked_slots.clone(), (hash40("landing_attack_air_frame_lw"), 0, 16.0));
+    update_float_2(*FIGHTER_KIND_GANON, marked_slots.clone(), (hash40("fighter"), hash40("common_effect_0_r"), 0.88));
+    update_float_2(*FIGHTER_KIND_GANON, marked_slots.clone(), (hash40("fighter"), hash40("common_effect_0_r"), 0.35));
+    update_float_2(*FIGHTER_KIND_GANON, marked_slots.clone(), (hash40("fighter"), hash40("common_effect_0_r"), 0.13));
+    disable_kirby_copy(*FIGHTER_KIND_GANON, marked_slots.clone());
+    disable_villager_pocket(*FIGHTER_KIND_GANON, marked_slots.clone(), 0);
+    println!("LOWEST: {} - COLOR NUM: {}", lowest_color, color_num);
+    add_chara_db_entry_info(
+        CharacterDatabaseEntry {
+            ui_chara_id: hash40("ui_chara_armstrong"), 
+            fighter_kind: Hash40Type::Overwrite(0x122AF1B944 /* Hash40 of fighter_kind_ganon */), 
+            fighter_kind_corps: Hash40Type::Overwrite(0x122AF1B944 /* Hash40 of fighter_kind_ganon */), 
+            ui_series_id: Hash40Type::Overwrite(0x130D25A5D0 /* Hash40 of ui_series_metalgear */), 
+            fighter_type: Hash40Type::Overwrite(0x1353795179 /* Hash40 of fighter_type_normal */), 
+            alt_chara_id: Hash40Type::Overwrite(0x2302D482A /* Hash40 of -1 */), 
+            shop_item_tag: Hash40Type::Overwrite(0x2302D482A /* Hash40 of -1 */), 
+            name_id: StringType::Overwrite(CStrCSK::new("armstrong")), 
+            exhibit_year: ShortType::Overwrite(2013), 
+            exhibit_day_order: IntType::Overwrite(112103), 
+            extra_flags: IntType::Overwrite(0), 
+            ext_skill_page_num: SignedByteType::Overwrite(0), 
+            skill_list_order: SignedByteType::Overwrite(70), 
+            disp_order: SignedByteType::Optional(Some(88)), 
+            save_no: SignedByteType::Overwrite(25), 
+            chara_count: SignedByteType::Overwrite(1), 
+            is_img_ext_skill_page0: BoolType::Overwrite(false), 
+            is_img_ext_skill_page1: BoolType::Overwrite(false), 
+            is_img_ext_skill_page2: BoolType::Overwrite(false), 
+            can_select: BoolType::Overwrite(true), 
+            is_usable_soundtest: BoolType::Overwrite(true), 
+            is_called_pokemon: BoolType::Overwrite(false), 
+            is_mii: BoolType::Overwrite(false), 
+            is_boss: BoolType::Overwrite(false), 
+            is_hidden_boss: BoolType::Overwrite(false), 
+            is_dlc: BoolType::Overwrite(false), 
+            is_patch: BoolType::Overwrite(false), 
+            is_plural_message: BoolType::Overwrite(false), 
+            is_plural_narration: BoolType::Overwrite(false), 
+            is_article: BoolType::Overwrite(false), 
+            has_multiple_face: BoolType::Overwrite(false), 
+            result_pf0: BoolType::Overwrite(true), 
+            result_pf1: BoolType::Overwrite(true), 
+            result_pf2: BoolType::Overwrite(true), 
+            color_num: UnsignedByteType::Overwrite(color_num as _),
+            extra_hash_maps: Hash40Map::Overwrite(HashMap::from([
+                (0x1337FC912E /* Hash40 of characall_label_c00 */, Hash40Type::Overwrite(hash40("vc_narration_characall_armstrong"))),
+                (0x1340FBA1B8 /* Hash40 of characall_label_c01 */, Hash40Type::Overwrite(0x0)),
+                (0x13D9F2F002 /* Hash40 of characall_label_c02 */, Hash40Type::Overwrite(0x0)),
+                (0x13AEF5C094 /* Hash40 of characall_label_c03 */, Hash40Type::Overwrite(0x0)),
+                (0x1330915537 /* Hash40 of characall_label_c04 */, Hash40Type::Overwrite(0x0)),
+                (0x13479665A1 /* Hash40 of characall_label_c05 */, Hash40Type::Overwrite(0x0)),
+                (0x13DE9F341B /* Hash40 of characall_label_c06 */, Hash40Type::Overwrite(0x0)),
+                (0x13A998048D /* Hash40 of characall_label_c07 */, Hash40Type::Overwrite(0x0)),
+                (0x1B8B13E500 /* Hash40 of characall_label_article_c00 */, Hash40Type::Overwrite(0x0)),
+                (0x1BFC14D596 /* Hash40 of characall_label_article_c01 */, Hash40Type::Overwrite(0x0)),
+                (0x1B651D842C /* Hash40 of characall_label_article_c02 */, Hash40Type::Overwrite(0x0)),
+                (0x1B121AB4BA /* Hash40 of characall_label_article_c03 */, Hash40Type::Overwrite(0x0)),
+                (0x1B8C7E2119 /* Hash40 of characall_label_article_c04 */, Hash40Type::Overwrite(0x0)),
+                (0x1BFB79118F /* Hash40 of characall_label_article_c05 */, Hash40Type::Overwrite(0x0)),
+                (0x1B62704035 /* Hash40 of characall_label_article_c06 */, Hash40Type::Overwrite(0x0)),
+                (0x1B157770A3 /* Hash40 of characall_label_article_c07 */, Hash40Type::Overwrite(0x0)),
+                (0x160ab9eb98, Hash40Type::Overwrite(0xea4221dc6)),
+            ])), 
+            extra_index_maps: UnsignedByteMap::Overwrite(HashMap::from([
+                (0x915C075DE /* Hash40 of c00_index */, UnsignedByteType::Overwrite(0)),
+                (0x9B3B77E6A /* Hash40 of c01_index */, UnsignedByteType::Overwrite(0)),
+                (0x9825F64F7 /* Hash40 of c02_index */, UnsignedByteType::Overwrite(0)),
+                (0x924286F43 /* Hash40 of c03_index */, UnsignedByteType::Overwrite(0)),
+                (0x9E18F51CD /* Hash40 of c04_index */, UnsignedByteType::Overwrite(0)),
+                (0x947F85A79 /* Hash40 of c05_index */, UnsignedByteType::Overwrite(0)),
+                (0x9761040E4 /* Hash40 of c06_index */, UnsignedByteType::Overwrite(0)),
+                (0x9D0674B50 /* Hash40 of c07_index */, UnsignedByteType::Overwrite(0)),
+                (0x9E48F9289 /* Hash40 of n00_index */, UnsignedByteType::Overwrite(0)),
+                (0x942F8993D /* Hash40 of n01_index */, UnsignedByteType::Overwrite(0)),
+                (0x9731083A0 /* Hash40 of n02_index */, UnsignedByteType::Overwrite(0)),
+                (0x9D5678814 /* Hash40 of n03_index */, UnsignedByteType::Overwrite(0)),
+                (0x910C0B69A /* Hash40 of n04_index */, UnsignedByteType::Overwrite(0)),
+                (0x9B6B7BD2E /* Hash40 of n05_index */, UnsignedByteType::Overwrite(0)),
+                (0x9875FA7B3 /* Hash40 of n06_index */, UnsignedByteType::Overwrite(0)),
+                (0x92128AC07 /* Hash40 of n07_index */, UnsignedByteType::Overwrite(0)),
+                (0x9F873561A /* Hash40 of c00_group */, UnsignedByteType::Overwrite(0)),
+                (0x95E045DAE /* Hash40 of c01_group */, UnsignedByteType::Overwrite(0)),
+                (0x96FEC4733 /* Hash40 of c02_group */, UnsignedByteType::Overwrite(0)),
+                (0x9C99B4C87 /* Hash40 of c03_group */, UnsignedByteType::Overwrite(0)),
+                (0x90C3C7209 /* Hash40 of c04_group */, UnsignedByteType::Overwrite(0)),
+                (0x9AA4B79BD /* Hash40 of c05_group */, UnsignedByteType::Overwrite(0)),
+                (0x99BA36320 /* Hash40 of c06_group */, UnsignedByteType::Overwrite(0)),
+                (0x93DD46894 /* Hash40 of c07_group */, UnsignedByteType::Overwrite(0)),
+                (hash40("color_start_index"), UnsignedByteType::Overwrite(lowest_color as _)),
+            ])), 
+            ..Default::default()
+        },
+    );
+    add_chara_layout_db_entry_info(CharacterLayoutDatabaseEntry {
+        ui_layout_id: hash40("ui_chara_armstrong_00"), 
+        ui_chara_id: Hash40Type::Overwrite(hash40("ui_chara_armstrong")), 
+        chara_color: UnsignedByteType::Overwrite(0), 
+        eye_0_flash_count: UnsignedByteType::Overwrite(1), 
+        eye_1_flash_count: UnsignedByteType::Overwrite(1), 
+        eye_2_flash_count: UnsignedByteType::Overwrite(1), 
+        eye_0_flash0_pos_x: FloatType::Overwrite(8.0), 
+        eye_0_flash0_pos_y: FloatType::Overwrite(242.0), 
+        eye_0_flash1_pos_x: FloatType::Overwrite(34.0), 
+        eye_0_flash1_pos_y: FloatType::Overwrite(-62.0), 
+        eye_0_flash2_pos_x: FloatType::Overwrite(0.0), 
+        eye_0_flash2_pos_y: FloatType::Overwrite(0.0), 
+        eye_0_flash3_pos_x: FloatType::Overwrite(0.0), 
+        eye_0_flash3_pos_y: FloatType::Overwrite(0.0), 
+        eye_0_flash4_pos_x: FloatType::Overwrite(0.0), 
+        eye_0_flash4_pos_y: FloatType::Overwrite(0.0), 
+        eye_1_flash0_pos_x: FloatType::Overwrite(4.0), 
+        eye_1_flash0_pos_y: FloatType::Overwrite(230.0), 
+        eye_1_flash1_pos_x: FloatType::Overwrite(34.0), 
+        eye_1_flash1_pos_y: FloatType::Overwrite(-62.0), 
+        eye_1_flash2_pos_x: FloatType::Overwrite(0.0), 
+        eye_1_flash2_pos_y: FloatType::Overwrite(0.0), 
+        eye_1_flash3_pos_x: FloatType::Overwrite(0.0), 
+        eye_1_flash3_pos_y: FloatType::Overwrite(0.0), 
+        eye_1_flash4_pos_x: FloatType::Overwrite(0.0), 
+        eye_1_flash4_pos_y: FloatType::Overwrite(0.0), 
+        eye_2_flash0_pos_x: FloatType::Overwrite(16.0), 
+        eye_2_flash0_pos_y: FloatType::Overwrite(104.0), 
+        eye_2_flash1_pos_x: FloatType::Overwrite(0.0), 
+        eye_2_flash1_pos_y: FloatType::Overwrite(0.0), 
+        eye_2_flash2_pos_x: FloatType::Overwrite(0.0), 
+        eye_2_flash2_pos_y: FloatType::Overwrite(0.0), 
+        eye_2_flash3_pos_x: FloatType::Overwrite(0.0), 
+        eye_2_flash3_pos_y: FloatType::Overwrite(0.0), 
+        eye_2_flash4_pos_x: FloatType::Overwrite(0.0), 
+        eye_2_flash4_pos_y: FloatType::Overwrite(0.0), 
+        eye_flash_info_pos_x: FloatType::Overwrite(3.0), 
+        eye_flash_info_pos_y: FloatType::Overwrite(4.0), 
+        chara_1_offset_x: FloatType::Overwrite(-5.0), 
+        chara_1_offset_y: FloatType::Overwrite(-76.0), 
+        chara_1_scale: FloatType::Overwrite(1.17), 
+        chara_1_1_offset_x: FloatType::Overwrite(-5.0), 
+        chara_1_1_offset_y: FloatType::Overwrite(-80.0), 
+        chara_1_1_scale: FloatType::Overwrite(1.65), 
+        chara_1_2_offset_x: FloatType::Overwrite(0.0), 
+        chara_1_2_offset_y: FloatType::Overwrite(0.0), 
+        chara_1_2_scale: FloatType::Overwrite(1.0), 
+        chara_1_3_offset_x: FloatType::Overwrite(0.0), 
+        chara_1_3_offset_y: FloatType::Overwrite(-47.0), 
+        chara_1_3_scale: FloatType::Overwrite(1.65), 
+        chara_1_4_offset_x: FloatType::Overwrite(-5.0), 
+        chara_1_4_offset_y: FloatType::Overwrite(-47.0), 
+        chara_1_4_scale: FloatType::Overwrite(1.65), 
+        chara_1_5_offset_x: FloatType::Overwrite(0.0), 
+        chara_1_5_offset_y: FloatType::Overwrite(0.0), 
+        chara_1_5_scale: FloatType::Overwrite(1.0), 
+        chara_3_0_offset_x: FloatType::Overwrite(95.0), 
+        chara_3_0_offset_y: FloatType::Overwrite(-215.0), 
+        chara_3_0_scale: FloatType::Overwrite(1.0), 
+        chara_3_1_offset_x: FloatType::Overwrite(92.0), 
+        chara_3_1_offset_y: FloatType::Overwrite(-250.0), 
+        chara_3_1_scale: FloatType::Overwrite(1.05), 
+        chara_3_2_offset_x: FloatType::Overwrite(150.0), 
+        chara_3_2_offset_y: FloatType::Overwrite(-100.0), 
+        chara_3_2_scale: FloatType::Overwrite(0.8), 
+        chara_3_3_offset_x: FloatType::Overwrite(95.0), 
+        chara_3_3_offset_y: FloatType::Overwrite(-215.0), 
+        chara_3_3_scale: FloatType::Overwrite(1.0), 
+        chara_3_4_offset_x: FloatType::Overwrite(95.0), 
+        chara_3_4_offset_y: FloatType::Overwrite(-215.0), 
+        chara_3_4_scale: FloatType::Overwrite(1.0), 
+        chara_3_5_offset_x: FloatType::Overwrite(60.0), 
+        chara_3_5_offset_y: FloatType::Overwrite(-240.0), 
+        chara_3_5_scale: FloatType::Overwrite(1.01), 
+        chara_3_6_offset_x: FloatType::Overwrite(0.0), 
+        chara_3_6_offset_y: FloatType::Overwrite(0.0), 
+        chara_3_6_scale: FloatType::Overwrite(1.0), 
+        chara_3_7_offset_x: FloatType::Overwrite(95.0), 
+        chara_3_7_offset_y: FloatType::Overwrite(-215.0), 
+        chara_3_7_scale: FloatType::Overwrite(1.0), 
+        chara_5_offset_x: FloatType::Overwrite(0.0), 
+        chara_5_offset_y: FloatType::Overwrite(0.0), 
+        chara_5_scale: FloatType::Overwrite(1.0), 
+        chara_select_icon_list_offset_x: FloatType::Overwrite(0.0), 
+        chara_select_icon_list_offset_y: FloatType::Overwrite(0.0), 
+        chara_select_icon_list_scale: FloatType::Overwrite(1.0), 
+        chara_7_0_offset_x: FloatType::Overwrite(-2.0), 
+        chara_7_0_offset_y: FloatType::Overwrite(4.0), 
+        chara_7_0_scale: FloatType::Overwrite(0.96), 
+        chara_7_1_offset_x: FloatType::Overwrite(-2.0), 
+        chara_7_1_offset_y: FloatType::Overwrite(4.0), 
+        chara_7_1_scale: FloatType::Overwrite(0.96), 
+        chara_0_offset_x: FloatType::Overwrite(0.0), 
+        chara_0_offset_y: FloatType::Overwrite(0.0), 
+        chara_0_scale: FloatType::Overwrite(1.0), 
+        spirits_eye_visible: BoolType::Overwrite(true), 
+        ..Default::default()
+    });
+}
+
+mod armstrong;
+pub mod common;
+
+#[skyline::main(name = "SenatorArmstrong")]
 pub fn main() {
-    custom::install();
+    unsafe {
+        //allows online play
+        extern "C" {
+            fn allow_ui_chara_hash_online(ui_chara_hash: u64);
+            fn arcrop_register_event_callback(ty: Event, callback: EventCallbackFn);
+        }
+        arcrop_register_event_callback(Event::ModFilesystemMounted, mods_mounted);
+        allow_ui_chara_hash_online(0x12540231f0); //ui_chara_armstrong
+    }
+    add_assigned_info_entry_info(&AssignedInfoEntry { 
+        info_id: hash40("info_zz09_f_armstrong"),
+        stream_id: Hash40Type::Overwrite(hash40("stream_zz09_f_armstrong")),
+        condition: Hash40Type::Overwrite(hash40("sound_condition_none")),
+        condition_process: Hash40Type::Overwrite(hash40("sound_condition_process_add")),
+        change_fadeout_frame: IntType::Overwrite(60),
+        menu_change_fadeout_frame: IntType::Overwrite(60),
+        ..Default::default()
+    });
+    add_bgm_db_entry_info(&BgmDatabaseRootEntry {ui_bgm_id: hash40("ui_bgm_zz09_f_armstrong"), clone_from_ui_bgm_id: Some(hash40("ui_bgm_z20_f_ganon")), stream_set_id: Hash40Type::Overwrite(hash40("set_zz09_f_armstrong")), ..Default::default()});
+    add_narration_characall_entry("vc_narration_characall_armstrong");
+    add_new_bgm_property_entry(&smash_bgm_property::BgmPropertyEntry {
+        stream_name: hash40::Hash40::new("zz09_f_armstrong"),
+        loop_start_ms: 0,
+        loop_start_sample: 0,
+        loop_end_ms: 0,
+        loop_end_sample: 0,
+        duration_ms: 7659,
+        duration_sample: 359424 
+    });
+    add_stream_property_entry_info(&StreamPropertyEntry {stream_id: hash40("stream_zz09_f_armstrong"), data_name0: StringType::Overwrite(CStrCSK::new("zz09_f_armstrong")), ..Default::default()});
+    add_stream_set_entry_info(&StreamSetEntry {stream_set_id: hash40("set_zz09_f_armstrong"), info0: Hash40Type::Overwrite(hash40("info_zz09_f_armstrong")), ..Default::default()}); 
+    armstrong::install();
 }
