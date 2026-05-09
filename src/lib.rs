@@ -261,22 +261,6 @@ extern "C" fn mods_mounted(_ev: Event) {
         spirits_eye_visible: BoolType::Overwrite(true), 
         ..Default::default()
     });
-}
-
-mod armstrong;
-pub mod common;
-
-#[skyline::main(name = "armstrong")]
-pub fn main() {
-    unsafe {
-        //allows online play
-        extern "C" {
-            fn allow_ui_chara_hash_online(ui_chara_hash: u64);
-            fn arcrop_register_event_callback(ty: Event, callback: EventCallbackFn);
-        }
-        arcrop_register_event_callback(Event::ModFilesystemMounted, mods_mounted);
-        allow_ui_chara_hash_online(0x12540231f0); //ui_chara_armstrong
-    }
     add_assigned_info_entry_info(&AssignedInfoEntry { 
         info_id: hash40("info_zz09_f_armstrong"),
         stream_id: Hash40Type::Overwrite(hash40("stream_zz09_f_armstrong")),
@@ -298,6 +282,22 @@ pub fn main() {
         duration_sample: 359424 
     });
     add_stream_property_entry_info(&StreamPropertyEntry {stream_id: hash40("stream_zz09_f_armstrong"), data_name0: StringType::Overwrite(CStrCSK::new("zz09_f_armstrong")), ..Default::default()});
-    add_stream_set_entry_info(&StreamSetEntry {stream_set_id: hash40("set_zz09_f_armstrong"), info0: Hash40Type::Overwrite(hash40("info_zz09_f_armstrong")), ..Default::default()}); 
+    add_stream_set_entry_info(&StreamSetEntry {stream_set_id: hash40("set_zz09_f_armstrong"), info0: Hash40Type::Overwrite(hash40("info_zz09_f_armstrong")), ..Default::default()});
     armstrong::install();
+}
+
+mod armstrong;
+pub mod common;
+
+#[skyline::main(name = "armstrong")]
+pub fn main() {
+    unsafe {
+        //allows online play
+        extern "C" {
+            fn allow_ui_chara_hash_online(ui_chara_hash: u64);
+            fn arcrop_register_event_callback(ty: Event, callback: EventCallbackFn);
+        }
+        arcrop_register_event_callback(Event::ModFilesystemMounted, mods_mounted);
+        allow_ui_chara_hash_online(0x12540231f0); //ui_chara_armstrong
+    }
 }

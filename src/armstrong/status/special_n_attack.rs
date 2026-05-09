@@ -20,7 +20,18 @@ unsafe extern "C" fn armstrong_special_n_attack_init_status(fighter: &mut L2CFig
 }
 
 unsafe extern "C" fn armstrong_special_n_attack_main_status(fighter: &mut L2CFighterCommon) -> L2CValue {
-    fighter.sub_change_motion_by_situation(L2CValue::Hash40s("special_n_attack"), L2CValue::Hash40s("special_air_n_attack"), false.into());
+    let situation_kind = fighter.global_table[SITUATION_KIND].get_i32();
+    if situation_kind == *SITUATION_KIND_GROUND {
+        if WorkModule::is_flag(fighter.module_accessor, *FIGHTER_ARMSTRONG_INSTANCE_WORK_ID_FLAG_WAS_INITIAL_SPECIAL_N) {
+            MotionModule::change_motion(fighter.module_accessor, Hash40::new("special_n_attack"), 7.0, 1.0, false, 0.0, false, false);
+        }
+        else {
+            MotionModule::change_motion(fighter.module_accessor, Hash40::new("special_n_attack"), 0.0, 1.0, false, 0.0, false, false);
+        }
+    }
+    else {
+        MotionModule::change_motion(fighter.module_accessor, Hash40::new("special_air_n_attack"), 0.0, 1.0, false, 0.0, false, false);
+    }
     fighter.sub_shift_status_main(L2CValue::Ptr(armstrong_special_n_attack_loop as *const () as _))
 }
 
@@ -63,11 +74,13 @@ unsafe extern "C" fn armstrong_special_n_attack_exec_status(_fighter: &mut L2CFi
 }
 
 unsafe extern "C" fn armstrong_special_n_attack_end_status(fighter: &mut L2CFighterCommon) -> L2CValue {
+    WorkModule::off_flag(fighter.module_accessor, *FIGHTER_ARMSTRONG_INSTANCE_WORK_ID_FLAG_WAS_INITIAL_SPECIAL_N);
     WorkModule::set_float(fighter.module_accessor, 0.0, *FIGHTER_ARMSTRONG_INSTANCE_WORK_ID_FLOAT_NEUTRAL_SPECIAL_CHARGE);
     0.into()
 }
 
 unsafe extern "C" fn armstrong_special_n_attack_exit_status(fighter: &mut L2CFighterCommon) -> L2CValue {
+    WorkModule::off_flag(fighter.module_accessor, *FIGHTER_ARMSTRONG_INSTANCE_WORK_ID_FLAG_WAS_INITIAL_SPECIAL_N);
     WorkModule::set_float(fighter.module_accessor, 0.0, *FIGHTER_ARMSTRONG_INSTANCE_WORK_ID_FLOAT_NEUTRAL_SPECIAL_CHARGE);
     0.into()
 }

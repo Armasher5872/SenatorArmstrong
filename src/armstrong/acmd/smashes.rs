@@ -187,16 +187,13 @@ unsafe extern "C" fn ssbexo_armstrong_up_smash_expression(agent: &mut L2CAgentBa
 
 //Down Smash Charge Effect
 unsafe extern "C" fn ssbexo_armstrong_down_smash_charge_effect(agent: &mut L2CAgentBase) {
-    frame(agent.lua_state_agent, 5.0);
     loop {
+        frame(agent.lua_state_agent, 5.0);
         if is_excute(agent) {
-        FOOT_EFFECT(agent, Hash40::new("sys_run_smoke"), Hash40::new("top"), -2, 0, 0, 0, 0, 0, 1, 15, 0, 10, 0, 0, 0, false);
+            FOOT_EFFECT(agent, Hash40::new("sys_run_smoke"), Hash40::new("top"), -2, 0, 0, 0, 0, 0, 1, 15, 0, 10, 0, 0, 0, false);
         }
         wait(agent.lua_state_agent, 5.0);
         EFFECT(agent, Hash40::new("sys_smash_flash_s"), Hash40::new("haver"), 0, 0, 0, 0, 0, 0, 1, 4, 4, 4, 0, 0, 0, true);
-        agent.clear_lua_stack();
-        wait_loop_sync_mot(agent.lua_state_agent);
-        agent.pop_lua_stack(1);
     }
 }
 

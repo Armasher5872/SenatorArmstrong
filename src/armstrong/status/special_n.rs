@@ -11,7 +11,7 @@ unsafe extern "C" fn armstrong_special_n_init_status(fighter: &mut L2CFighterCom
     let situation_kind = fighter.global_table[SITUATION_KIND].get_i32();
     if situation_kind == *SITUATION_KIND_AIR {
         GroundModule::correct(fighter.module_accessor, GroundCorrectKind(*GROUND_CORRECT_KIND_AIR));
-        KineticModule::change_kinetic(fighter.module_accessor, *FIGHTER_KINETIC_TYPE_FALL);
+        KineticModule::change_kinetic(fighter.module_accessor, *FIGHTER_KINETIC_TYPE_MOTION_AIR);
     }
     else {
         GroundModule::correct(fighter.module_accessor, GroundCorrectKind(*GROUND_CORRECT_KIND_GROUND_CLIFF_STOP));
@@ -27,26 +27,38 @@ unsafe extern "C" fn armstrong_special_n_main_status(fighter: &mut L2CFighterCom
 
 unsafe extern "C" fn armstrong_special_n_loop(fighter: &mut L2CFighterCommon) -> L2CValue {
     let situation_kind = fighter.global_table[SITUATION_KIND].get_i32();
+    if CancelModule::is_enable_cancel(fighter.module_accessor) {
+        if fighter.sub_wait_ground_check_common(false.into()).get_bool()
+        || fighter.sub_air_check_fall_common().get_bool() {
+            return 1.into();
+        }
+    }
     if !StatusModule::is_changing(fighter.module_accessor) {
         if StatusModule::is_situation_changed(fighter.module_accessor) {
             if situation_kind == *SITUATION_KIND_GROUND {
-                GroundModule::correct(fighter.module_accessor, GroundCorrectKind(*GROUND_CORRECT_KIND_GROUND_CLIFF_STOP));
-                KineticModule::change_kinetic(fighter.module_accessor, *FIGHTER_KINETIC_TYPE_MOTION);
-                MotionModule::change_motion_inherit_frame(fighter.module_accessor, Hash40::new("special_n"), -1.0, 1.0, 0.0, false, false);
+                GroundModule::correct(fighter.module_accessor, GroundCorrectKind(*GROUND_CORRECT_KIND_GROUND));
+                KineticModule::change_kinetic(fighter.module_accessor, *FIGHTER_KINETIC_TYPE_GROUND_STOP);
+                WorkModule::on_flag(fighter.module_accessor, *FIGHTER_ARMSTRONG_INSTANCE_WORK_ID_FLAG_WAS_INITIAL_SPECIAL_N);
+                fighter.change_status(FIGHTER_ARMSTRONG_STATUS_KIND_SPECIAL_N_ATTACK.into(), false.into());
             }
             else {
                 GroundModule::correct(fighter.module_accessor, GroundCorrectKind(*GROUND_CORRECT_KIND_AIR));
                 KineticModule::change_kinetic(fighter.module_accessor, *FIGHTER_KINETIC_TYPE_FALL);
-                MotionModule::change_motion_inherit_frame(fighter.module_accessor, Hash40::new("special_air_n"), -1.0, 1.0, 0.0, false, false);
+                fighter.change_status(FIGHTER_STATUS_KIND_FALL.into(), false.into());
             }
         }
     }
     if MotionModule::is_end(fighter.module_accessor) {
-        if ControlModule::check_button_on(fighter.module_accessor, *CONTROL_PAD_BUTTON_SPECIAL) {
-            fighter.change_status(FIGHTER_ARMSTRONG_STATUS_KIND_SPECIAL_N_CHARGE.into(), true.into());
+        if situation_kind == *SITUATION_KIND_GROUND {
+            if ControlModule::check_button_on(fighter.module_accessor, *CONTROL_PAD_BUTTON_SPECIAL) {
+                fighter.change_status(FIGHTER_ARMSTRONG_STATUS_KIND_SPECIAL_N_CHARGE.into(), true.into());
+            }
+            else {
+                fighter.change_status(FIGHTER_ARMSTRONG_STATUS_KIND_SPECIAL_N_ATTACK.into(), false.into());
+            }
         }
         else {
-            fighter.change_status(FIGHTER_ARMSTRONG_STATUS_KIND_SPECIAL_N_ATTACK.into(), false.into());
+            fighter.change_status(FIGHTER_STATUS_KIND_FALL.into(), false.into());
         }
         return 1.into();
     }

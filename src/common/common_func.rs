@@ -1,3 +1,4 @@
+#![allow(improper_ctypes_definitions)] //Addresses `extern` fn uses type `str`, which is not FFI-safe
 use super::*;
 
 //Checks if the user got damaged
