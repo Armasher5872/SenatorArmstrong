@@ -4,7 +4,7 @@ const ARMSTRONG_VTABLE_RESET_INITIALIZATION_OFFSET: usize = 0x68d5e0; //Shared
 const ARMSTRONG_VTABLE_DEATH_INITIALIZATION_OFFSET: usize = 0xaa6520; //Armstrong only
 const ARMSTRONG_VTABLE_ON_ATTACK_OFFSET: usize = 0xaa6540; //Armstrong only
 const ARMSTRONG_VTABLE_ON_DAMAGE_OFFSET: usize = 0x68d9e0; //Shared
-const ARMSTRONG_VTABLE_LINK_EVENT_OFFSET: usize = 0xaa6990; //Armstrong only
+const ARMSTRONG_VTABLE_LINK_EVENT_OFFSET: usize = 0xaa6990; //Shared
 
 //Armstrong Reset Initialization
 #[skyline::hook(offset = ARMSTRONG_VTABLE_RESET_INITIALIZATION_OFFSET)]
@@ -63,7 +63,7 @@ unsafe extern "C" fn armstrong_on_attack(vtable: u64, fighter: &mut Fighter, log
 
 //Armstrong Link Event
 #[skyline::hook(offset = ARMSTRONG_VTABLE_LINK_EVENT_OFFSET)]
-unsafe extern "C" fn armstrong_link_event(_vtable: u64, fighter: &mut Fighter, log: *mut u64) -> u64 {
+unsafe extern "C" fn armstrong_link_event(vtable: u64, fighter: &mut Fighter, log: *mut u64) -> u64 {
     let boma = fighter.battle_object.module_accessor;
     let status = StatusModule::status_kind(boma);
     let offset = WorkModule::get_int(boma, *FIGHTER_INSTANCE_WORK_ID_INT_CATCH_MOTION_OFFSET);
@@ -183,7 +183,10 @@ unsafe extern "C" fn armstrong_link_event(_vtable: u64, fighter: &mut Fighter, l
             }
         }
     }
-    1
+    // Anything not explicitly handled above (including events meant for other
+    // Ganondorf-based movesets, e.g. other echo/vtable mods installed alongside
+    // this one) gets passed down the hook chain instead of being swallowed here.
+    original!()(vtable, fighter, log)
 }
 
 //Armstrong On Damage
