@@ -33,6 +33,14 @@ unsafe extern "C" fn status_catched_air_ganon(fighter: &mut L2CFighterCommon) ->
         base_clatter = ganon_special_s_fall_clatter_add_frame_up_limit;
     }
     ControlModule::start_clatter(fighter.module_accessor, ganon_special_s_fall_hold_frame+base_clatter, 1.0, ganon_special_s_fall_clatter_frame, 127, 0, false, false);
+    if is_armstrong_slots(parent_boma) {
+        // Armstrong's hold is a scripted command grab, not vanilla Flame Choke's
+        // mashable hold - freeze the clatter/struggle meter immediately so mashing
+        // can't drain it and break the victim free early. Armstrong's own status
+        // logic (special_s_catch/special_s_run) is what decides when to release
+        // them, not this timer.
+        ControlModule::set_clatter_stop(fighter.module_accessor, true);
+    }
     fighter.sub_shift_status_main(L2CValue::Ptr(L2CFighterCommon_bind_address_call_status_CatchedAirGanon_Main as *const () as _))
 }
 
