@@ -1,10 +1,7 @@
 use {
-    crate::{
-        common::{
-            armstrong_func::*,
-            common_func::*,
-        },
-        MARKED_COLORS
+    crate::common::{
+        armstrong_func::*,
+        common_func::*,
     },
     smash::{
         app::{

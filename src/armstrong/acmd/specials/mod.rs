@@ -1,11 +1,8 @@
 use {
-    crate::{
-        common::{
-            armstrong_func::*,
-            armstrong_var::*,
-            common_func::*,
-        },
-        MARKED_COLORS
+    crate::common::{
+        armstrong_func::*,
+        armstrong_var::*,
+        common_func::*,
     },
     smash::{
         app::{
@@ -38,6 +35,7 @@ use {
 mod final_start;
 mod final_throw;
 mod firepillar_burst;
+mod special_hi_catch;
 mod special_hi_throw;
 mod special_hi;
 mod special_lw;
@@ -55,6 +53,7 @@ pub fn install() {
     final_start::install();
     final_throw::install();
     firepillar_burst::install();
+    special_hi_catch::install();
     special_hi_throw::install();
     special_hi::install();
     special_n_attack::install();

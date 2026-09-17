@@ -1,14 +1,11 @@
 #![allow(static_mut_refs, unused_mut)] //Addresses variable does not need to be mutable and creating a shared reference to mutable static
 use {
-    crate::{
-        common::{
-            armstrong_func::*,
-            armstrong_var::*,
-            common_func::*,
-            globals::*,
-            hook::*,
-        },
-        MARKED_COLORS
+    crate::common::{
+        armstrong_func::*,
+        armstrong_var::*,
+        common_func::*,
+        globals::*,
+        hook::*,
     },
     smash::{
         app::{
@@ -21,10 +18,7 @@ use {
             lua_const::*,
         },
         lua2cpp::L2CFighterCommon,
-        phx::{
-            Hash40,
-            Vector3f
-        }
+        phx::*
     },
     smash2::app::{
         LinkEvent,
@@ -45,6 +39,6 @@ pub fn install() {
     status::install();
     vtable::install();
     unsafe {
-        FIGHTER_ARMSTRONG_GENERATE_ARTICLE_FIREPILLAR += clone_weapon("luigi", *WEAPON_KIND_LUIGI_FIREBALL, "ganon", "firepillar", false);
+        FIGHTER_ARMSTRONG_GENERATE_ARTICLE_FIREPILLAR += clone_weapon("luigi", *WEAPON_KIND_LUIGI_FIREBALL, "ganon", "fireballcloned", false);
     }
 }

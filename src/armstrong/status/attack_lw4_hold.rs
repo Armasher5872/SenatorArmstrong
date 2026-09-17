@@ -6,16 +6,8 @@ unsafe extern "C" fn armstrong_attack_hi4_hold_end_status(fighter: &mut L2CFight
 }
 
 pub fn install() {
-    let mut costume = &mut Vec::new();
-    unsafe {
-        for i in 0..MARKED_COLORS.len() {
-            if MARKED_COLORS[i] {
-                costume.push(i);
-            }
-        }
-    }
     Agent::new("ganon")
-    .set_costume(costume.to_vec())
+    .set_costume(get_armstrong_costumes_acmd())
     .status(End, *FIGHTER_STATUS_KIND_ATTACK_HI4_HOLD, armstrong_attack_hi4_hold_end_status)
     .install()
     ;

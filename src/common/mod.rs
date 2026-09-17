@@ -1,12 +1,10 @@
 #![allow(internal_features)]
 use {
-    crate::{
-        common::{
-            armstrong_var::*,
-            common_func::*,
-            globals::*,
-        },
-        MARKED_COLORS,
+    crate::common::{
+        armstrong_var::*,
+        common_func::*,
+        globals::*,
+        hook::*,
     },
     smash::{
         app::{

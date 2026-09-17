@@ -2,16 +2,39 @@
 use super::*;
 
 pub unsafe extern "C" fn is_armstrong_slots(boma: *mut BattleObjectModuleAccessor) -> bool {
-    MARKED_COLORS[WorkModule::get_int(boma, *FIGHTER_INSTANCE_WORK_ID_INT_COLOR) as usize]
+    ARMSTRONG_MARKED_COLORS[WorkModule::get_int(boma, *FIGHTER_INSTANCE_WORK_ID_INT_COLOR) as usize]
+}
+
+pub fn get_armstrong_costumes_acmd() -> Vec<usize> {
+	let costumes = &mut Vec::new();
+    unsafe {
+        let marked = *&raw mut ARMSTRONG_MARKED_COLORS;
+        for i in 0..marked.len() {
+            if marked[i] {
+                costumes.push(i);
+            }
+        }
+    }
+    costumes.to_vec()
+}
+
+pub fn get_armstrong_costumes_non_acmd() -> Vec<i32> {
+	let costumes = &mut Vec::new();
+    unsafe {
+        let marked = *&raw mut ARMSTRONG_MARKED_COLORS;
+        for i in 0..marked.len() {
+            if marked[i] {
+                costumes.push(i as i32);
+            }
+        }
+    }
+    costumes.to_vec()
 }
 
 pub unsafe extern "C" fn armstrong_var(boma: &mut BattleObjectModuleAccessor) {
-    WorkModule::off_flag(boma, *FIGHTER_ARMSTRONG_INSTANCE_WORK_ID_FLAG_FULL_SMASH_ATTACK);
     WorkModule::off_flag(boma, *FIGHTER_ARMSTRONG_INSTANCE_WORK_ID_FLAG_CLEAR_CHARGE);
-    WorkModule::off_flag(boma, *FIGHTER_ARMSTRONG_INSTANCE_WORK_ID_FLAG_WAS_INITIAL_SPECIAL_N);
     WorkModule::off_flag(boma, *FIGHTER_ARMSTRONG_INSTANCE_WORK_ID_FLAG_SPECIAL_S_RUN);
     WorkModule::off_flag(boma, *FIGHTER_ARMSTRONG_INSTANCE_WORK_ID_FLAG_SPECIAL_S_JUMP);
-    WorkModule::off_flag(boma, *FIGHTER_ARMSTRONG_INSTANCE_WORK_ID_FLAG_SPECIAL_S_DISABLE);
     WorkModule::off_flag(boma, *FIGHTER_ARMSTRONG_INSTANCE_WORK_ID_FLAG_COUNTER_ACTIVE);
     WorkModule::off_flag(boma, *FIGHTER_ARMSTRONG_INSTANCE_WORK_ID_FLAG_NANOMACHINES);
     WorkModule::off_flag(boma, *FIGHTER_ARMSTRONG_INSTANCE_WORK_ID_FLAG_THROW);
@@ -27,13 +50,13 @@ pub unsafe extern "C" fn armstrong_var(boma: &mut BattleObjectModuleAccessor) {
 }
 
 pub unsafe extern "C" fn armstrong_charge_move(fighter: &mut L2CFighterCommon, charge_start: f32, charge_end: f32, motion_rate_mul: f32, armor_value: f32, charging: bool, is_armored_move: bool, charge_effect_bone: &str) {
-    let current_frame = MotionModule::frame(fighter.module_accessor);
     let boma = fighter.module_accessor;
+    let current_frame = MotionModule::frame(boma);
     let armor_multiplier = WorkModule::get_float(boma, *FIGHTER_ARMSTRONG_INSTANCE_WORK_ID_FLOAT_ARMOR_CHARGE_MULTIPLIER);
     let damage_multiplier = WorkModule::get_float(boma, *FIGHTER_ARMSTRONG_INSTANCE_WORK_ID_FLOAT_DAMAGE_CHARGE_MULTIPLIER);
     let charge_frames = WorkModule::get_int(boma, *FIGHTER_ARMSTRONG_INSTANCE_WORK_ID_INT_CHARGE_FRAME);
     let max_charge: f32 = 20.0;
-    let motion_rate= motion_rate_mul*(charge_frames as f32);
+    let motion_rate = motion_rate_mul*(charge_frames as f32);
     if (charge_start..charge_end).contains(&current_frame) && charge_frames <= (max_charge as i32) && charging {
         MotionModule::set_rate(boma, motion_rate);
         WorkModule::set_float(boma, 1.0+((1.0/14.0)*(charge_frames as f32)), *FIGHTER_ARMSTRONG_INSTANCE_WORK_ID_FLOAT_ARMOR_CHARGE_MULTIPLIER);
