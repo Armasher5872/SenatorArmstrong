@@ -8,7 +8,7 @@ unsafe extern "C" fn armstrong_special_air_s_end_pre_status(fighter: &mut L2CFig
 }
 
 unsafe extern "C" fn armstrong_special_air_s_end_init_status(fighter: &mut L2CFighterCommon) -> L2CValue {
-    notify_event_msc_cmd!(fighter, Hash40::new_raw(0x32e468d950), hash40("catched_ganon"), hash40("catched_air_end_ganon"));
+    notify_event_msc_cmd!(fighter, Hash40::new("fighter_msc_cmd_ganon_link_event_send_event_nodes2"), hash40("catched_ganon"), hash40("catched_air_end_ganon"));
     0.into()
 }
 

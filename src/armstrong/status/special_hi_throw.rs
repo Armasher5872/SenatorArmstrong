@@ -15,7 +15,7 @@ unsafe extern "C" fn armstrong_special_hi_throw_init_status(fighter: &mut L2CFig
     sv_kinetic_energy!(set_accel, fighter, *FIGHTER_KINETIC_ENERGY_ID_GRAVITY, -0.07);
     sv_kinetic_energy!(set_stable_speed, fighter, *FIGHTER_KINETIC_ENERGY_ID_STOP, 1.0);
     sv_kinetic_energy!(set_limit_speed, fighter, *FIGHTER_KINETIC_ENERGY_ID_STOP, 1.0);
-    notify_event_msc_cmd!(fighter, Hash40::new_raw(0x32e468d950), Hash40::new("throw"), Hash40::new("invalid"));
+    notify_event_msc_cmd!(fighter, Hash40::new("fighter_msc_cmd_ganon_link_event_send_event_nodes2"), Hash40::new("throw"), Hash40::new("invalid"));
     0.into()
 }
 

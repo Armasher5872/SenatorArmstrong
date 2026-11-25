@@ -89,7 +89,7 @@ unsafe extern "C" fn armstrong_final_throw_end_status(fighter: &mut L2CFighterCo
         CatchModule::set_send_cut_event(boma, true);
         CatchModule::catch_cut(boma, false, false);
     }
-    notify_event_msc_cmd!(fighter, Hash40::new_raw(0x1e0aba2d68));
+    notify_event_msc_cmd!(fighter, Hash40::new("fighter_msc_cmd_self_end_final"));
     WorkModule::off_flag(boma, *FIGHTER_ARMSTRONG_INSTANCE_WORK_ID_FLAG_THROW);
     0.into()
 }
@@ -108,7 +108,7 @@ unsafe extern "C" fn armstrong_final_throw_exit_status(fighter: &mut L2CFighterC
         sv_module_access::_catch(fighter.lua_state_agent);
         fighter.pop_lua_stack(1);
     }
-    notify_event_msc_cmd!(fighter, Hash40::new_raw(0x1e0aba2d68));
+    notify_event_msc_cmd!(fighter, Hash40::new("fighter_msc_cmd_self_end_final"));
     WorkModule::off_flag(boma, *FIGHTER_ARMSTRONG_INSTANCE_WORK_ID_FLAG_THROW);
     0.into()
 }

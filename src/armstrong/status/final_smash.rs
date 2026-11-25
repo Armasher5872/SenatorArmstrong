@@ -27,7 +27,7 @@ unsafe extern "C" fn armstrong_final_init_status(fighter: &mut L2CFighterCommon)
 
 unsafe extern "C" fn armstrong_final_main_status(fighter: &mut L2CFighterCommon) -> L2CValue {
     let boma = fighter.module_accessor;
-    notify_event_msc_cmd!(fighter, Hash40::new_raw(0x201bc9217c));
+    notify_event_msc_cmd!(fighter, Hash40::new("fighter_msc_cmd_self_start_final"));
     AreaModule::set_whole(boma, false);
     fighter.sub_change_motion_by_situation(L2CValue::Hash40s("final_start"), L2CValue::Hash40s("final_air_start"), false.into());
     fighter.sub_shift_status_main(L2CValue::Ptr(armstrong_final_main_loop as *const () as _))
@@ -77,7 +77,7 @@ unsafe extern "C" fn armstrong_final_exec_status(_fighter: &mut L2CFighterCommon
 unsafe extern "C" fn armstrong_final_end_status(fighter: &mut L2CFighterCommon) -> L2CValue {
     let status_kind = fighter.global_table[STATUS_KIND].get_i32();
     if status_kind != *FIGHTER_ARMSTRONG_STATUS_KIND_FINAL_THROW {
-        notify_event_msc_cmd!(fighter, Hash40::new_raw(0x1e0aba2d68));
+        notify_event_msc_cmd!(fighter, Hash40::new("fighter_msc_cmd_self_end_final"));
     }
     0.into()
 }
@@ -85,7 +85,7 @@ unsafe extern "C" fn armstrong_final_end_status(fighter: &mut L2CFighterCommon) 
 unsafe extern "C" fn armstrong_final_exit_status(fighter: &mut L2CFighterCommon) -> L2CValue {
     let status_kind = fighter.global_table[STATUS_KIND].get_i32();
     if status_kind != *FIGHTER_ARMSTRONG_STATUS_KIND_FINAL_THROW {
-        notify_event_msc_cmd!(fighter, Hash40::new_raw(0x1e0aba2d68));
+        notify_event_msc_cmd!(fighter, Hash40::new("fighter_msc_cmd_self_end_final"));
     }
     0.into()
 }

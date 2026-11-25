@@ -7,6 +7,7 @@ use {
         globals::*,
         hook::*,
     },
+    param_config::*,
     smash::{
         app::{
             lua_bind::*,
@@ -34,11 +35,46 @@ mod status;
 mod vtable;
 
 pub fn install() {
+    let firepillar = clone_weapon("ganon", "firepillar", *WEAPON_KIND_LUIGI_FIREBALL, false);
+    unsafe {
+        FIGHTER_ARMSTRONG_GENERATE_ARTICLE_FIREPILLAR = firepillar.generate_id;
+        WEAPON_KIND_ARMSTRONG_FIREPILLAR = firepillar.weapon_id;
+    }
+    disable_kirby_copy(*FIGHTER_KIND_GANON, get_armstrong_costumes_non_acmd());
+    disable_villager_pocket(*FIGHTER_KIND_GANON, get_armstrong_costumes_non_acmd(), 0);
+    update_float_2(*FIGHTER_KIND_GANON, get_armstrong_costumes_non_acmd(), (hash40("walk_accel_mul"), 0, 0.06));
+    update_float_2(*FIGHTER_KIND_GANON, get_armstrong_costumes_non_acmd(), (hash40("walk_accel_add"), 0, 0.01));
+    update_float_2(*FIGHTER_KIND_GANON, get_armstrong_costumes_non_acmd(), (hash40("walk_speed_max"), 0, 0.64));
+    update_float_2(*FIGHTER_KIND_GANON, get_armstrong_costumes_non_acmd(), (hash40("ground_brake"), 0, 0.15));
+    update_float_2(*FIGHTER_KIND_GANON, get_armstrong_costumes_non_acmd(), (hash40("dash_speed"), 0, 1.443));
+    update_float_2(*FIGHTER_KIND_GANON, get_armstrong_costumes_non_acmd(), (hash40("run_accel_mul"), 0, 0.015));
+    update_float_2(*FIGHTER_KIND_GANON, get_armstrong_costumes_non_acmd(), (hash40("run_accel_add"), 0, 0.15));
+    update_float_2(*FIGHTER_KIND_GANON, get_armstrong_costumes_non_acmd(), (hash40("run_speed_max"), 0, 1.36));
+    update_float_2(*FIGHTER_KIND_GANON, get_armstrong_costumes_non_acmd(), (hash40("jump_speed_x"), 0, 0.788));
+    update_float_2(*FIGHTER_KIND_GANON, get_armstrong_costumes_non_acmd(), (hash40("jump_speed_x_max"), 0, 1.443));
+    update_float_2(*FIGHTER_KIND_GANON, get_armstrong_costumes_non_acmd(), (hash40("jump_y"), 0, 32.0));
+    update_float_2(*FIGHTER_KIND_GANON, get_armstrong_costumes_non_acmd(), (hash40("mini_jump_y"), 0, 15.0));
+    update_float_2(*FIGHTER_KIND_GANON, get_armstrong_costumes_non_acmd(), (hash40("jump_aerial_y"), 0, 30.35));
+    update_float_2(*FIGHTER_KIND_GANON, get_armstrong_costumes_non_acmd(), (hash40("air_accel_x_mul"), 0, 0.02));
+    update_float_2(*FIGHTER_KIND_GANON, get_armstrong_costumes_non_acmd(), (hash40("air_accel_x_add"), 0, 0.05));
+    update_float_2(*FIGHTER_KIND_GANON, get_armstrong_costumes_non_acmd(), (hash40("air_speed_x_stable"), 0, 0.875));
+    update_float_2(*FIGHTER_KIND_GANON, get_armstrong_costumes_non_acmd(), (hash40("air_brake_x"), 0, 0.01));
+    update_float_2(*FIGHTER_KIND_GANON, get_armstrong_costumes_non_acmd(), (hash40("air_accel_y"), 0, 0.13));
+    update_float_2(*FIGHTER_KIND_GANON, get_armstrong_costumes_non_acmd(), (hash40("air_speed_y_stable"), 0, 1.85));
+    update_float_2(*FIGHTER_KIND_GANON, get_armstrong_costumes_non_acmd(), (hash40("damage_fly_top_air_accel_y"), 0, 0.13));
+    update_float_2(*FIGHTER_KIND_GANON, get_armstrong_costumes_non_acmd(), (hash40("damage_fly_top_speed_y_stable"), 0, 1.85));
+    update_float_2(*FIGHTER_KIND_GANON, get_armstrong_costumes_non_acmd(), (hash40("dive_speed_y"), 0, 3.17));
+    update_float_2(*FIGHTER_KIND_GANON, get_armstrong_costumes_non_acmd(), (hash40("weight"), 0, 116.0));
+    update_float_2(*FIGHTER_KIND_GANON, get_armstrong_costumes_non_acmd(), (hash40("landing_attack_air_frame_n"), 0, 10.0));
+    update_float_2(*FIGHTER_KIND_GANON, get_armstrong_costumes_non_acmd(), (hash40("landing_attack_air_frame_f"), 0, 13.0));
+    update_float_2(*FIGHTER_KIND_GANON, get_armstrong_costumes_non_acmd(), (hash40("landing_attack_air_frame_b"), 0, 11.0));
+    update_float_2(*FIGHTER_KIND_GANON, get_armstrong_costumes_non_acmd(), (hash40("landing_attack_air_frame_hi"), 0, 12.0));
+    update_float_2(*FIGHTER_KIND_GANON, get_armstrong_costumes_non_acmd(), (hash40("landing_attack_air_frame_lw"), 0, 16.0));
+    update_float_2(*FIGHTER_KIND_GANON, get_armstrong_costumes_non_acmd(), (hash40("fighter"), hash40("common_effect_0_r"), 0.88));
+    update_float_2(*FIGHTER_KIND_GANON, get_armstrong_costumes_non_acmd(), (hash40("fighter"), hash40("common_effect_0_r"), 0.35));
+    update_float_2(*FIGHTER_KIND_GANON, get_armstrong_costumes_non_acmd(), (hash40("fighter"), hash40("common_effect_0_r"), 0.13));
     acmd::install();
     opff::install();
     status::install();
     vtable::install();
-    unsafe {
-        FIGHTER_ARMSTRONG_GENERATE_ARTICLE_FIREPILLAR += clone_weapon("luigi", *WEAPON_KIND_LUIGI_FIREBALL, "ganon", "fireballcloned", false);
-    }
 }

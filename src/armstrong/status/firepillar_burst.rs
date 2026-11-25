@@ -6,11 +6,12 @@ unsafe extern "C" fn armstrong_firepillar_burst_pre_status(weapon: &mut L2CWeapo
 }
 
 unsafe extern "C" fn armstrong_firepillar_burst_init_status(weapon: &mut L2CWeaponCommon) -> L2CValue {
-    let owner_boma = get_owner_boma(weapon);
-    let life = WorkModule::get_param_int(weapon.module_accessor, hash40("param_firepillar"), hash40("life"));
-    WorkModule::set_int(weapon.module_accessor, life, *WEAPON_INSTANCE_WORK_ID_INT_INIT_LIFE);
-    WorkModule::set_int(weapon.module_accessor, life, *WEAPON_INSTANCE_WORK_ID_INT_LIFE);
-    WorkModule::set_int(owner_boma, weapon.battle_object_id as i32, *FIGHTER_ARMSTRONG_INSTANCE_WORK_ID_INT_FLAME_PILLAR_ID);
+    let boma = weapon.module_accessor;
+    let founder_boma = get_founder_boma(weapon);
+    let life = WorkModule::get_param_int(boma, hash40("param_firepillar"), hash40("life"));
+    WorkModule::set_int(boma, life, *WEAPON_INSTANCE_WORK_ID_INT_INIT_LIFE);
+    WorkModule::set_int(boma, life, *WEAPON_INSTANCE_WORK_ID_INT_LIFE);
+    WorkModule::set_int(founder_boma, weapon.battle_object_id as i32, *FIGHTER_ARMSTRONG_INSTANCE_WORK_ID_INT_FLAME_PILLAR_ID);
     0.into()
 }
 
@@ -21,31 +22,33 @@ unsafe extern "C" fn armstrong_firepillar_burst_main_status(weapon: &mut L2CWeap
 
 unsafe extern "C" fn armstrong_firepillar_burst_main_loop(weapon: &mut L2CWeaponCommon) -> L2CValue {
     let frame = weapon.global_table[CURRENT_FRAME].get_f32();
-    let owner_boma = get_owner_boma(weapon);
-    let owner_lr = PostureModule::lr(owner_boma);
-    let owner_pos_x = PostureModule::pos_x(owner_boma);
-    let owner_pos_y = PostureModule::pos_y(owner_boma);
-    let owner_pos_z = PostureModule::pos_z(owner_boma);
-    let life = WorkModule::get_int(weapon.module_accessor, *WEAPON_INSTANCE_WORK_ID_INT_LIFE);
-    let pos_x = WorkModule::get_float(weapon.module_accessor, *WEAPON_ARMSTRONG_FIREPILLAR_INSTANCE_WORK_ID_FLOAT_POS_X);
-    let pos_y = WorkModule::get_float(weapon.module_accessor, *WEAPON_ARMSTRONG_FIREPILLAR_INSTANCE_WORK_ID_FLOAT_POS_Y);
-    WorkModule::dec_int(weapon.module_accessor, *WEAPON_INSTANCE_WORK_ID_INT_LIFE);
+    let boma = weapon.module_accessor;
+    let founder_boma = get_founder_boma(weapon);
+    let founder_lr = PostureModule::lr(founder_boma);
+    let founder_pos_x = PostureModule::pos_x(founder_boma);
+    let founder_pos_y = PostureModule::pos_y(founder_boma);
+    let founder_pos_z = PostureModule::pos_z(founder_boma);
+    let life = WorkModule::get_int(boma, *WEAPON_INSTANCE_WORK_ID_INT_LIFE);
+    let pos_x = WorkModule::get_float(boma, *WEAPON_ARMSTRONG_FIREPILLAR_INSTANCE_WORK_ID_FLOAT_POS_X);
+    let pos_y = WorkModule::get_float(boma, *WEAPON_ARMSTRONG_FIREPILLAR_INSTANCE_WORK_ID_FLOAT_POS_Y);
+    WorkModule::dec_int(boma, *WEAPON_INSTANCE_WORK_ID_INT_LIFE);
     if frame < 3.0 {
-        PostureModule::set_pos(weapon.module_accessor, &Vector3f{x: owner_pos_x+(pos_x*owner_lr), y: owner_pos_y+pos_y, z: owner_pos_z});
+        PostureModule::set_pos(boma, &Vector3f{x: founder_pos_x+(pos_x*founder_lr), y: founder_pos_y+pos_y, z: founder_pos_z});
     }
     if life <= 0 {
-        notify_event_msc_cmd!(weapon, Hash40::new_raw(0x199c462b5d));
+        notify_event_msc_cmd!(weapon, Hash40::new("wn_msc_cmd_self_wn_remove"));
     }
     0.into()
 }
 
 unsafe extern "C" fn armstrong_firepillar_burst_end_status(weapon: &mut L2CWeaponCommon) -> L2CValue {
-    let owner_boma = get_owner_boma(weapon);
-    WorkModule::set_int(owner_boma, *BATTLE_OBJECT_ID_INVALID, *FIGHTER_ARMSTRONG_INSTANCE_WORK_ID_INT_FLAME_PILLAR_ID);
-    WorkModule::set_int(weapon.module_accessor, 0, *WEAPON_ARMSTRONG_FIREPILLAR_INSTANCE_WORK_ID_INT_EFFECT_ID);
-    WorkModule::set_float(weapon.module_accessor, 0.0, *WEAPON_ARMSTRONG_FIREPILLAR_INSTANCE_WORK_ID_FLOAT_POS_X);
-    WorkModule::set_float(weapon.module_accessor, 0.0, *WEAPON_ARMSTRONG_FIREPILLAR_INSTANCE_WORK_ID_FLOAT_POS_Y);
-    WorkModule::set_float(weapon.module_accessor, 0.0, *WEAPON_ARMSTRONG_FIREPILLAR_INSTANCE_WORK_ID_FLOAT_CHARGE);
+    let boma = weapon.module_accessor;
+    let founder_boma = get_founder_boma(weapon);
+    WorkModule::set_int(founder_boma, *BATTLE_OBJECT_ID_INVALID, *FIGHTER_ARMSTRONG_INSTANCE_WORK_ID_INT_FLAME_PILLAR_ID);
+    WorkModule::set_int(boma, 0, *WEAPON_ARMSTRONG_FIREPILLAR_INSTANCE_WORK_ID_INT_EFFECT_ID);
+    WorkModule::set_float(boma, 0.0, *WEAPON_ARMSTRONG_FIREPILLAR_INSTANCE_WORK_ID_FLOAT_POS_X);
+    WorkModule::set_float(boma, 0.0, *WEAPON_ARMSTRONG_FIREPILLAR_INSTANCE_WORK_ID_FLOAT_POS_Y);
+    WorkModule::set_float(boma, 0.0, *WEAPON_ARMSTRONG_FIREPILLAR_INSTANCE_WORK_ID_FLOAT_CHARGE);
     0.into()
 }
 

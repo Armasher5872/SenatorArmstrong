@@ -1,7 +1,7 @@
 use super::*;
 
-//Grounded Side Special Run ACMD
-unsafe extern "C" fn ssbexo_armstrong_grounded_side_special_run_acmd(agent: &mut L2CAgentBase) {
+//Side Special Run ACMD
+unsafe extern "C" fn ssbexo_armstrong_side_special_run_acmd(agent: &mut L2CAgentBase) {
     if is_excute(agent) {
         ATTACK_ABS(agent, *FIGHTER_ATTACK_ABSOLUTE_KIND_CATCH, 0, 4.0, 0, 10, 0, 100, 0.0, 1.0, *ATTACK_LR_CHECK_F, 0.0, true, Hash40::new("collision_attr_normal"), *ATTACK_SOUND_LEVEL_S, *COLLISION_SOUND_ATTR_KICK, *ATTACK_REGION_NONE);
         CATCH(agent, 0, Hash40::new("top"), 5.0, 0.0, 6.0, 7.5, None, None, None, *FIGHTER_STATUS_KIND_CATCHED_AIR_GANON, *COLLISION_SITUATION_MASK_GA);
@@ -9,8 +9,8 @@ unsafe extern "C" fn ssbexo_armstrong_grounded_side_special_run_acmd(agent: &mut
     }
 }
 
-//Grounded Side Special Run Effect
-unsafe extern "C" fn ssbexo_armstrong_grounded_side_special_run_effect(agent: &mut L2CAgentBase) {
+//Side Special Run Effect
+unsafe extern "C" fn ssbexo_armstrong_side_special_run_effect(agent: &mut L2CAgentBase) {
     let lua_state = agent.lua_state_agent;
     for _ in 0..3 {
         if is_excute(agent) {
@@ -20,8 +20,8 @@ unsafe extern "C" fn ssbexo_armstrong_grounded_side_special_run_effect(agent: &m
     }
 }
 
-//Grounded Side Special Run Sound
-unsafe extern "C" fn ssbexo_armstrong_grounded_side_special_run_sound(agent: &mut L2CAgentBase) {
+//Side Special Run Sound
+unsafe extern "C" fn ssbexo_armstrong_side_special_run_sound(agent: &mut L2CAgentBase) {
     let lua_state = agent.lua_state_agent;
     if is_excute(agent) {
         PLAY_SE(agent, Hash40::new("se_ganon_step_right_m"));
@@ -32,47 +32,8 @@ unsafe extern "C" fn ssbexo_armstrong_grounded_side_special_run_sound(agent: &mu
     }
 }
 
-//Grounded Side Special Run Expression
-unsafe extern "C" fn ssbexo_armstrong_grounded_side_special_run_expression(agent: &mut L2CAgentBase) {
-    if is_excute(agent) {
-        slope!(agent, *MA_MSC_CMD_SLOPE_SLOPE, *SLOPE_STATUS_LR);
-    }
-}
-
-//Aerial Side Special Run ACMD
-unsafe extern "C" fn ssbexo_armstrong_aerial_side_special_run_acmd(agent: &mut L2CAgentBase) {
-    if is_excute(agent) {
-        ATTACK_ABS(agent, *FIGHTER_ATTACK_ABSOLUTE_KIND_CATCH, 0, 4.0, 0, 10, 0, 100, 0.0, 1.0, *ATTACK_LR_CHECK_F, 0.0, true, Hash40::new("collision_attr_normal"), *ATTACK_SOUND_LEVEL_S, *COLLISION_SOUND_ATTR_KICK, *ATTACK_REGION_NONE);
-        CATCH(agent, 0, Hash40::new("top"), 5.0, 0.0, 6.0, 7.5, None, None, None, *FIGHTER_STATUS_KIND_CATCHED_AIR_GANON, *COLLISION_SITUATION_MASK_GA);
-        CATCH(agent, 1, Hash40::new("top"), 5.0, 0.0, 11.0, 7.5, None, None, None, *FIGHTER_STATUS_KIND_CATCHED_AIR_GANON, *COLLISION_SITUATION_MASK_GA);
-    }
-}
-
-//Aerial Side Special Run Effect
-unsafe extern "C" fn ssbexo_armstrong_aerial_side_special_run_effect(agent: &mut L2CAgentBase) {
-    let lua_state = agent.lua_state_agent;
-    for _ in 0..3 {
-        if is_excute(agent) {
-            FOOT_EFFECT(agent, Hash40::new("sys_run_smoke"), Hash40::new("top"), 2, 0, 0, 0, 0, 0, 1, 2, 0, 4, 0, 0, 0, false);
-        }
-        wait(lua_state, 4.0);
-    }
-}
-
-//Aerial Side Special Run Sound
-unsafe extern "C" fn ssbexo_armstrong_aerial_side_special_run_sound(agent: &mut L2CAgentBase) {
-    let lua_state = agent.lua_state_agent;
-    if is_excute(agent) {
-        PLAY_SE(agent, Hash40::new("se_ganon_step_right_m"));
-    }
-    frame(lua_state, 7.0);
-    if is_excute(agent) {
-        PLAY_SE(agent, Hash40::new("se_ganon_step_left_m"));
-    }
-}
-
-//Aerial Side Special Run Expression
-unsafe extern "C" fn ssbexo_armstrong_aerial_side_special_run_expression(agent: &mut L2CAgentBase) {
+//Side Special Run Expression
+unsafe extern "C" fn ssbexo_armstrong_side_special_run_expression(agent: &mut L2CAgentBase) {
     if is_excute(agent) {
         slope!(agent, *MA_MSC_CMD_SLOPE_SLOPE, *SLOPE_STATUS_LR);
     }
@@ -81,14 +42,14 @@ unsafe extern "C" fn ssbexo_armstrong_aerial_side_special_run_expression(agent: 
 pub fn install() {
     Agent::new("ganon")
     .set_costume(get_armstrong_costumes_acmd())
-    .acmd("game_specialsrun", ssbexo_armstrong_grounded_side_special_run_acmd, Low)
-    .acmd("effect_specialsrun", ssbexo_armstrong_grounded_side_special_run_effect, Low)
-    .acmd("sound_specialsrun", ssbexo_armstrong_grounded_side_special_run_sound, Low)
-    .acmd("expression_specialsrun", ssbexo_armstrong_grounded_side_special_run_expression, Low)
-    .acmd("game_specialairsrun", ssbexo_armstrong_aerial_side_special_run_acmd, Low)
-    .acmd("effect_specialairsrun", ssbexo_armstrong_aerial_side_special_run_effect, Low)
-    .acmd("sound_specialairsrun", ssbexo_armstrong_aerial_side_special_run_sound, Low)
-    .acmd("expression_specialairsrun", ssbexo_armstrong_aerial_side_special_run_expression, Low)
+    .acmd("game_specialsrun", ssbexo_armstrong_side_special_run_acmd, Low)
+    .acmd("effect_specialsrun", ssbexo_armstrong_side_special_run_effect, Low)
+    .acmd("sound_specialsrun", ssbexo_armstrong_side_special_run_sound, Low)
+    .acmd("expression_specialsrun", ssbexo_armstrong_side_special_run_expression, Low)
+    .acmd("game_specialairsrun", ssbexo_armstrong_side_special_run_acmd, Low)
+    .acmd("effect_specialairsrun", ssbexo_armstrong_side_special_run_effect, Low)
+    .acmd("sound_specialairsrun", ssbexo_armstrong_side_special_run_sound, Low)
+    .acmd("expression_specialairsrun", ssbexo_armstrong_side_special_run_expression, Low)
     .install()
     ;
 }

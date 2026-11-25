@@ -1,7 +1,8 @@
 use super::*;
 
 unsafe extern "C" fn armstrong_special_s_callback(fighter: &mut L2CFighterCommon) -> L2CValue {
-    if WorkModule::is_flag(fighter.module_accessor, *FIGHTER_ARMSTRONG_INSTANCE_WORK_ID_FLAG_SPECIAL_S_DISABLE) {
+    let boma = fighter.module_accessor;
+    if WorkModule::is_flag(boma, *FIGHTER_ARMSTRONG_INSTANCE_WORK_ID_FLAG_SPECIAL_S_DISABLE) {
         return 0.into();
     }
     1.into()

@@ -18,7 +18,7 @@ unsafe extern "C" fn armstrong_special_s_fall_init_status(fighter: &mut L2CFight
     sv_kinetic_energy!(set_limit_speed, fighter, *FIGHTER_KINETIC_ENERGY_ID_STOP, 0.7);
     sv_kinetic_energy!(set_accel_x_mul, fighter, *FIGHTER_KINETIC_ENERGY_ID_CONTROL, 0.03);
     sv_kinetic_energy!(set_brake, fighter, *FIGHTER_KINETIC_ENERGY_ID_CONTROL, 0.02);
-    notify_event_msc_cmd!(fighter, Hash40::new_raw(0x31697c2b98), hash40("catched_ganon"), hash40("catched_air_fall_ganon"));
+    notify_event_msc_cmd!(fighter, Hash40::new("fighter_msc_cmd_ganon_link_event_send_event_nodes"), hash40("catched_ganon"), hash40("catched_air_fall_ganon"));
     0.into()
 }
 
@@ -30,13 +30,8 @@ unsafe extern "C" fn armstrong_special_s_fall_main_status(fighter: &mut L2CFight
 
 unsafe extern "C" fn armstrong_special_s_fall_loop(fighter: &mut L2CFighterCommon) -> L2CValue {
     let situation_kind = fighter.global_table[SITUATION_KIND].get_i32();
-    let boma = fighter.module_accessor;
     if situation_kind == *SITUATION_KIND_GROUND {
         fighter.change_status(FIGHTER_GANON_STATUS_KIND_SPECIAL_AIR_S_END.into(), false.into());
-        return 1.into();
-    }
-    if MotionModule::is_end(boma) {
-        fighter.change_status(FIGHTER_GANON_STATUS_KIND_SPECIAL_AIR_S_FALL.into(), false.into());
         return 1.into();
     }
     0.into()
@@ -46,19 +41,14 @@ unsafe extern "C" fn armstrong_special_s_fall_exec_status(_fighter: &mut L2CFigh
     0.into()
 }
 
-unsafe extern "C" fn armstrong_special_s_fall_end_status(fighter: &mut L2CFighterCommon) -> L2CValue {
-    let status_kind = fighter.global_table[STATUS_KIND].get_i32();
-    let boma = fighter.module_accessor;
-    if ![*FIGHTER_GANON_STATUS_KIND_SPECIAL_AIR_S_FALL, *FIGHTER_GANON_STATUS_KIND_SPECIAL_AIR_S_END].contains(&status_kind) {
-        CatchModule::catch_cut(boma, false, false);
-    }
+unsafe extern "C" fn armstrong_special_s_fall_end_status(_fighter: &mut L2CFighterCommon) -> L2CValue {
     0.into()
 }
 
 unsafe extern "C" fn armstrong_special_s_fall_exit_status(fighter: &mut L2CFighterCommon) -> L2CValue {
     let status_kind = fighter.global_table[STATUS_KIND].get_i32();
     let boma = fighter.module_accessor;
-    if ![*FIGHTER_GANON_STATUS_KIND_SPECIAL_AIR_S_FALL, *FIGHTER_GANON_STATUS_KIND_SPECIAL_AIR_S_END].contains(&status_kind) {
+    if status_kind != *FIGHTER_GANON_STATUS_KIND_SPECIAL_AIR_S_END {
         CatchModule::catch_cut(boma, false, false);
     }
     0.into()

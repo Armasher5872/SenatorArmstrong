@@ -18,15 +18,15 @@ unsafe extern "C" fn ssbexo_armstrong_firepillar_burst_effect(agent: &mut L2CAge
     let boma = agent.module_accessor;
     frame(lua_state, 3.0);
     if is_excute(agent) {
-        let owner_boma = get_owner_boma(agent);
-        let owner_lr = PostureModule::lr(owner_boma);
-        let owner_pos_x = PostureModule::pos_x(owner_boma);
-        let owner_pos_y = PostureModule::pos_y(owner_boma);
-        let owner_pos_z = PostureModule::pos_z(owner_boma);
+        let founder_boma = get_founder_boma(agent);
+        let founder_lr = PostureModule::lr(founder_boma);
+        let founder_pos_x = PostureModule::pos_x(founder_boma);
+        let founder_pos_y = PostureModule::pos_y(founder_boma);
+        let founder_pos_z = PostureModule::pos_z(founder_boma);
         let pos_x = WorkModule::get_float(boma, *WEAPON_ARMSTRONG_FIREPILLAR_INSTANCE_WORK_ID_FLOAT_POS_X);
         let pos_y = WorkModule::get_float(boma, *WEAPON_ARMSTRONG_FIREPILLAR_INSTANCE_WORK_ID_FLOAT_POS_Y);
         LANDING_EFFECT(agent, Hash40::new("null"), Hash40::new("top"), 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, false);
-        let effect = EffectModule::req(boma, Hash40::new("armstrong_ground_flame_crack"), &Vector3f{x: owner_pos_x+(pos_x*owner_lr), y: owner_pos_y+pos_y, z: owner_pos_z}, &Vector3f{x: 0.0, y: 0.0, z: 0.0}, 1.0, 0, -1, false, 0);
+        let effect = EffectModule::req(boma, Hash40::new("armstrong_ground_flame_crack"), &Vector3f{x: founder_pos_x+(pos_x*founder_lr), y: founder_pos_y+pos_y, z: founder_pos_z}, &Vector3f{x: 0.0, y: 0.0, z: 0.0}, 1.0, 0, -1, false, 0);
         WorkModule::set_int(boma, effect as i32, *WEAPON_ARMSTRONG_FIREPILLAR_INSTANCE_WORK_ID_INT_EFFECT_ID);
     }
     frame(lua_state, 15.0);

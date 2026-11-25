@@ -13,7 +13,7 @@ unsafe extern "C" fn armstrong_special_n_init_status(fighter: &mut L2CFighterCom
     let boma = fighter.module_accessor;
     if situation_kind == *SITUATION_KIND_AIR {
         GroundModule::correct(boma, GroundCorrectKind(*GROUND_CORRECT_KIND_AIR));
-        KineticModule::change_kinetic(boma, *FIGHTER_KINETIC_TYPE_FALL);
+        KineticModule::change_kinetic(boma, *FIGHTER_KINETIC_TYPE_MOTION_AIR);
     }
     else {
         GroundModule::correct(boma, GroundCorrectKind(*GROUND_CORRECT_KIND_GROUND_CLIFF_STOP));
@@ -34,8 +34,8 @@ unsafe extern "C" fn armstrong_special_n_loop(fighter: &mut L2CFighterCommon) ->
         if StatusModule::is_situation_changed(boma) {
             if situation_kind == *SITUATION_KIND_GROUND {
                 GroundModule::correct(boma, GroundCorrectKind(*GROUND_CORRECT_KIND_GROUND_CLIFF_STOP));
-                KineticModule::change_kinetic(boma, *FIGHTER_KINETIC_TYPE_MOTION);
-                MotionModule::change_motion_inherit_frame(boma, Hash40::new("special_n"), -1.0, 1.0, 0.0, false, false);
+                KineticModule::change_kinetic(boma, *FIGHTER_KINETIC_TYPE_GROUND_STOP);
+                fighter.change_status(FIGHTER_STATUS_KIND_LANDING_FALL_SPECIAL.into(), false.into());
             }
             else {
                 GroundModule::correct(boma, GroundCorrectKind(*GROUND_CORRECT_KIND_AIR));
@@ -45,11 +45,16 @@ unsafe extern "C" fn armstrong_special_n_loop(fighter: &mut L2CFighterCommon) ->
         }
     }
     if MotionModule::is_end(boma) {
-        if ControlModule::check_button_on(boma, *CONTROL_PAD_BUTTON_SPECIAL) {
-            fighter.change_status(FIGHTER_ARMSTRONG_STATUS_KIND_SPECIAL_N_CHARGE.into(), true.into());
+        if situation_kind == *SITUATION_KIND_AIR {
+            fighter.change_status(FIGHTER_STATUS_KIND_FALL.into(), false.into());
         }
         else {
-            fighter.change_status(FIGHTER_ARMSTRONG_STATUS_KIND_SPECIAL_N_ATTACK.into(), false.into());
+            if ControlModule::check_button_on(boma, *CONTROL_PAD_BUTTON_SPECIAL) {
+                fighter.change_status(FIGHTER_ARMSTRONG_STATUS_KIND_SPECIAL_N_CHARGE.into(), true.into());
+            }
+            else {
+                fighter.change_status(FIGHTER_ARMSTRONG_STATUS_KIND_SPECIAL_N_ATTACK.into(), false.into());
+            }
         }
         return 1.into();
     }
@@ -63,7 +68,7 @@ unsafe extern "C" fn armstrong_special_n_exec_status(_fighter: &mut L2CFighterCo
 unsafe extern "C" fn armstrong_special_n_end_status(fighter: &mut L2CFighterCommon) -> L2CValue {
     let status_kind = fighter.global_table[STATUS_KIND].get_i32();
     let boma = fighter.module_accessor;
-    if [*FIGHTER_ARMSTRONG_STATUS_KIND_SPECIAL_N_CHARGE, *FIGHTER_ARMSTRONG_STATUS_KIND_SPECIAL_N_ATTACK].contains(&status_kind) {
+    if ![*FIGHTER_ARMSTRONG_STATUS_KIND_SPECIAL_N_CHARGE, *FIGHTER_ARMSTRONG_STATUS_KIND_SPECIAL_N_ATTACK].contains(&status_kind) {
         WorkModule::set_float(boma, 0.0, *FIGHTER_ARMSTRONG_INSTANCE_WORK_ID_FLOAT_NEUTRAL_SPECIAL_CHARGE);
     }
     0.into()
@@ -72,7 +77,7 @@ unsafe extern "C" fn armstrong_special_n_end_status(fighter: &mut L2CFighterComm
 unsafe extern "C" fn armstrong_special_n_exit_status(fighter: &mut L2CFighterCommon) -> L2CValue {
     let status_kind = fighter.global_table[STATUS_KIND].get_i32();
     let boma = fighter.module_accessor;
-    if [*FIGHTER_ARMSTRONG_STATUS_KIND_SPECIAL_N_CHARGE, *FIGHTER_ARMSTRONG_STATUS_KIND_SPECIAL_N_ATTACK].contains(&status_kind) {
+    if ![*FIGHTER_ARMSTRONG_STATUS_KIND_SPECIAL_N_CHARGE, *FIGHTER_ARMSTRONG_STATUS_KIND_SPECIAL_N_ATTACK].contains(&status_kind) {
         WorkModule::set_float(boma, 0.0, *FIGHTER_ARMSTRONG_INSTANCE_WORK_ID_FLOAT_NEUTRAL_SPECIAL_CHARGE);
     }
     0.into()

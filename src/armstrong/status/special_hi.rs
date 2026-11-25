@@ -18,8 +18,8 @@ unsafe extern "C" fn armstrong_special_hi_main_status(fighter: &mut L2CFighterCo
     let special_hi_fall_x_mul = WorkModule::get_param_float(boma, hash40("param_special_hi"), hash40("special_hi_fall_x_mul"));
     let special_hi_landing_frame = WorkModule::get_param_float(boma, hash40("param_special_hi"), hash40("special_hi_landing_frame"));
     let special_hi_speed_coef = WorkModule::get_param_float(boma, hash40("param_special_hi"), hash40("special_hi_speed_coef"));
-    WorkModule::set_int64(boma, hash40("special_hi") as i64, *FIGHTER_STATUS_SUPER_JUMP_PUNCH_WORK_INT_MOTION_KIND);
-    WorkModule::set_int64(boma, hash40("special_air_hi") as i64, *FIGHTER_STATUS_SUPER_JUMP_PUNCH_WORK_INT_MOTION_KIND_AIR);
+    WorkModule::set_int64(boma, hash40("special_hi") as u64, *FIGHTER_STATUS_SUPER_JUMP_PUNCH_WORK_INT_MOTION_KIND);
+    WorkModule::set_int64(boma, hash40("special_air_hi") as u64, *FIGHTER_STATUS_SUPER_JUMP_PUNCH_WORK_INT_MOTION_KIND_AIR);
     WorkModule::set_float(boma, special_hi_lr_stick_x, *FIGHTER_STATUS_SUPER_JUMP_PUNCH_WORK_FLOAT_CONST_LR_STICK_X);
     WorkModule::set_float(boma, special_hi_fall_x_mul, *FIGHTER_STATUS_SUPER_JUMP_PUNCH_WORK_FLOAT_CONST_FALL_X_MUL);
     WorkModule::set_int(boma, special_hi_landing_frame as i32, *FIGHTER_STATUS_SUPER_JUMP_PUNCH_WORK_INT_CONST_LANDING_FRAME);

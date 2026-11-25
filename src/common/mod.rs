@@ -3,8 +3,7 @@ use {
     crate::common::{
         armstrong_var::*,
         common_func::*,
-        globals::*,
-        hook::*,
+        globals::*
     },
     smash::{
         app::{
@@ -14,14 +13,14 @@ use {
         hash40,
         lib::{
             LuaConst,
-            lua_const::*,
+            lua_const::*
         },
         lua2cpp::*,
         phx::*
     },
     smash_script::{
-        *,
-        macros::*
+        macros::*,
+        *
     }
 };
 

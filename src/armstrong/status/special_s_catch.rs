@@ -8,10 +8,6 @@ unsafe extern "C" fn armstrong_special_s_catch_pre_status(fighter: &mut L2CFight
 }
 
 unsafe extern "C" fn armstrong_special_s_catch_init_status(fighter: &mut L2CFighterCommon) -> L2CValue {
-    fighter.clear_lua_stack();
-    lua_args!(fighter, *MA_MSC_CMD_CATCH_SET_CATCH);
-    sv_module_access::_catch(fighter.lua_state_agent);
-    fighter.pop_lua_stack(1);
     let boma = fighter.module_accessor;
     let get_sum_speed_x = KineticModule::get_sum_speed_x(boma, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
     let get_sum_speed_y = KineticModule::get_sum_speed_y(boma, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
@@ -26,7 +22,11 @@ unsafe extern "C" fn armstrong_special_s_catch_init_status(fighter: &mut L2CFigh
         KineticModule::change_kinetic(boma, *FIGHTER_KINETIC_TYPE_MOTION);
     }
     WorkModule::set_float(boma, get_sum_speed_y, *FIGHTER_ARMSTRONG_INSTANCE_WORK_ID_FLOAT_SPECIAL_S_CATCH_INIT_Y_VEL);
-    notify_event_msc_cmd!(fighter, Hash40::new_raw(0x31697c2b98), hash40("catched_ganon"), hash40("catched_air_ganon"));
+    notify_event_msc_cmd!(fighter, Hash40::new("fighter_msc_cmd_ganon_link_event_send_event_nodes"), hash40("catched_ganon"), hash40("catched_air_ganon"));
+    fighter.clear_lua_stack();
+    lua_args!(fighter, *MA_MSC_CMD_CATCH_SET_CATCH);
+    sv_module_access::_catch(fighter.lua_state_agent);
+    fighter.pop_lua_stack(1);
     0.into()
 }
 
